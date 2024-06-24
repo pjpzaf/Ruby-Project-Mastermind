@@ -1,21 +1,12 @@
 # Class for the methods/functions used in Main.rb
 class GameFunctions
-  attr_accessor :game_rounds
+  attr_accessor :game_rounds, :computer_score
   attr_reader :color_pegs
 
-  def initialize(game_rounds)
+  def initialize(game_rounds, computer_score)
     @game_rounds = game_rounds
     @color_pegs = %w[r g b y w p]
-  end
-
-  # A single 12 round game wherein the player is the codebreaker
-  # and the computer is the codemaker.
-  # Colors that can be selected as pegs are red, green, blue, yellow, white
-  # and pink
-  def player_codebreaker
-    puts "Round #{round}"
-    puts "\n"
-    computer_code = generate_code
+    @computer_score = computer_score
   end
 
   def generate_code
@@ -38,12 +29,14 @@ class GameFunctions
     loop_counter = 0
     until loop_counter == 4
       if player_choice.length != 4
+        loop_counter = 0
         player_choice = invalid_input
       elsif player_choice.length == 4
         player_choice.each do |choice|
           if color_pegs.include?(choice)
             loop_counter += 1
           else
+            loop_counter = 0
             player_choice = invalid_input
           end
         end
@@ -73,8 +66,38 @@ class GameFunctions
       if element == guess[loop_counter]
         correct_guess += 1
         loop_counter += 1
+      elsif element != guess[loop_counter]
+        loop_counter += 1
       end
     end
     correct_guess
+  end
+
+  def display_result(correct_guess)
+    puts "You guessed #{correct_guess} out of 4"
+  end
+
+  def cb_round_result(correct_guess, player)
+    if correct_guess == 4
+      player_win(player)
+    elsif correct_guess != 4
+      computer_wins(computer_score)
+    end
+  end
+
+  def display_score(player, computer_score)
+    puts 'The score is'
+    puts "#{player.name.chop}: #{player.score}"
+    puts "Computer: #{computer_score}"
+  end
+
+  def player_win(player)
+    puts "#{player.name.chop} wins this round!"
+    player.score += 1
+  end
+
+  def computer_wins(computer_score)
+    puts 'The computer wins this round!'
+    computer_score += 1
   end
 end

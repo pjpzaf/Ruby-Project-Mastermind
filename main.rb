@@ -14,7 +14,7 @@ puts "\n"
 print 'How many game rounds (maximum of 5): '
 game_rounds = gets
 game_rounds = game_rounds.to_i
-new_game = GameFunctions.new(game_rounds)
+new_game = GameFunctions.new(game_rounds, 0)
 puts "\n"
 
 # To check if the correct number of rounds are selected by the player
@@ -64,16 +64,24 @@ for round_counter in 1..game_rounds
   if role_select == '1'
     puts "#{player.name.chop} is the codebreaker!"
     computer_code = new_game.generate_code
-    puts computer_code
     puts 'The computer has created the code!'
+    puts computer_code
+
     for game_counter in 0..11
       puts "Guess number #{game_counter + 1}"
       player_choice = new_game.player_input
       player_choice = new_game.check_input(player_choice)
       correct_guess = new_game.evaluate_input(computer_code, player_choice)
-      puts correct_guess
+      new_game.display_result(correct_guess)
+      break if correct_guess == 4
     end
 
+    if correct_guess == 4
+      player.score = new_game.cb_round_result(correct_guess, player)
+    else
+      new_game.computer_score = new_game.cb_round_result(correct_guess, player)
+    end
+    
   # The player is the codemaker
   elsif role_select == '2'
     puts "#{player.name.chop} is the codemaker!"
