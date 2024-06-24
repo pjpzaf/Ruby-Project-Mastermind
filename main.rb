@@ -65,7 +65,6 @@ for round_counter in 1..game_rounds
     puts "#{player.name.chop} is the codebreaker!"
     computer_code = new_game.generate_code
     puts 'The computer has created the code!'
-    puts computer_code
 
     for game_counter in 0..11
       puts "Guess number #{game_counter + 1}"
@@ -81,9 +80,27 @@ for round_counter in 1..game_rounds
     else
       new_game.computer_score = new_game.cb_round_result(correct_guess, player)
     end
-    
+
   # The player is the codemaker
   elsif role_select == '2'
     puts "#{player.name.chop} is the codemaker!"
+    player_choice = new_game.player_input
+    player_choice = new_game.check_input(player_choice)
+    puts "#{player.name.chop} has added a code!"
+    for game_counter in 0..11
+      puts "Guess number #{game_counter + 1}"
+      computer_code = new_game.generate_code
+      puts "The computer has guessed a code!"
+      correct_guess = new_game.evaluate_input(player_choice, computer_code)
+      new_game.display_result(correct_guess)
+      break if correct_guess == 4
+    end
+  end
+
+  # To ensure alternate roles every other turn
+  if role_select == '1'
+    role_select = '2'
+  else
+    role_select = '1'
   end
 end
